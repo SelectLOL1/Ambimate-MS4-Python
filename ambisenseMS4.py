@@ -23,9 +23,17 @@ while 1:
     # Read 15 bytes of data
     myshitvalues = ambishit.read_i2c_block_data(address,0x00,15).copy()
 
-    # Evaluate values
-    if(myshitvalues[5-14] == 255): #Ambishit ate shit, don't use that values
+    # Evaluate values, sometimes the last few Bytes are all on 255
+    for i in range(9):
+        if myshitvalues[i+5] == 255:
+            shitvaluesincoming = True
+        else:
+            shitvaluesincoming = False
+            break
+        
+    if(shitvaluesincoming == True): #Ambishit ate shit, don't use that values
         print(f'Shit values: {myshitvalues}')
+        shitvaluesincoming = False
         time.sleep(1)
         pass
     else:
